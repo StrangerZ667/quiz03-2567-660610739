@@ -1,42 +1,35 @@
-import { DB, readDB, writeDB } from "@lib/DB";
+import { DB, readDB, writeDB, Database, Payload, Room } from "@lib/DB";
 import { checkToken } from "@lib/checkToken";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
-import { Payload } from "@lib/DB";
 
 export const GET = async () => {
   readDB();
   return NextResponse.json({
     ok: true,
-    rooms: DB.rooms,
-    totalRooms: DB.rooms.length
+    rooms: (<Database>DB).rooms,
+    totalRooms: (<Database>DB).rooms.length
   });
 };
 
 export const POST = async (request: NextRequest) => {
   const payload = checkToken();
-  let role = null;
-  try {
-    if(payload){
-      role = (<Payload>payload).role;
-    }
-  } catch {
-   return NextResponse.json(
-     {
-       ok: false,
-       message: "Invalid token",
-     },
-     { status: 401 }
-   );
+  if (!payload) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Invalid token",
+      },
+      { status: 401 }
+    );
   }
-
   readDB();
 
   
   const body = await request.json();
   const { roomName } = body;
 
-  const foundRoom = DB.roomName.find(
+  const foundRoom = (<Database>DB).rooms.find(
     (x:any) => x.roomName === roomName
   );
   if (foundRoom) {
@@ -52,6 +45,7 @@ export const POST = async (request: NextRequest) => {
   const roomId = nanoid();
 
   //call writeDB after modifying Database
+  (<Database>DB).rooms.push(roomName);
   writeDB();
 
   return NextResponse.json({
