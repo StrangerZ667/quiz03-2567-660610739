@@ -14,7 +14,7 @@ export const GET = async () => {
 
 export const POST = async (request: NextRequest) => {
   const payload = checkToken();
-  if (!payload || (<Payload>payload).role !== "SUPER_ADMIN") {
+  if (!payload) {
     return NextResponse.json(
       {
         ok: false,
