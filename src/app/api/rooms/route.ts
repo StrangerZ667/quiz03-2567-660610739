@@ -25,27 +25,25 @@ export const POST = async (request: NextRequest) => {
   }
   readDB();
 
-  
   const body = await request.json();
-  const { roomName } = body;
 
-  const foundRoom = (<Database>DB).rooms.find(
-    (x:any) => x.roomName === roomName
-  );
+  const foundRoom = (<Database>DB).rooms.find((x) => x.roomName === body.roomName);
   if (foundRoom) {
    return NextResponse.json(
      {
        ok: false,
-       message: `Room ${"replace this with room name"} already exists`,
+       message: `Room ${body.roomName} already exists`,
      },
      { status: 400 }
    );
   }
 
   const roomId = nanoid();
+  const roomName = body.roomName;
+  const newRoom = { roomId , roomName };
 
   //call writeDB after modifying Database
-  (<Database>DB).rooms.push(roomName);
+  (<Database>DB).rooms.push(newRoom);
   writeDB();
 
   return NextResponse.json({
