@@ -26,8 +26,8 @@ export interface Payload {
 }
 
 export interface Database {
-  room: Room[];
-  message: Message[];
+  rooms: Room[];
+  messages: Message[];
   users: User[];
 }
 
