@@ -61,7 +61,6 @@ export const DELETE = async (request: NextRequest) => {
        },
        { status: 401 }
      );
-
   }
 
   readDB();
